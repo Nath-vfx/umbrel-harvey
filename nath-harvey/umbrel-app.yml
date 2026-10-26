@@ -3,7 +3,7 @@ id: nath-harvey
 name: Harvey
 tagline: Your subscription-powered AI sales agent
 category: ai
-version: "0.2.1-umbrel.3"
+version: "0.2.1-umbrel.4"
 port: 5555
 icon: https://avatars.githubusercontent.com/u/249879463?s=256
 description: >-
@@ -29,4 +29,4 @@ defaultPassword: ""
 storage:
   dataRoot: data
 releaseNotes: >-
-  Initial independent Umbrel package of Harvey 0.2.1, pinned to upstream commit 8023a949. Includes Claude Code and Codex, an authenticated Umbrel dashboard, and persistent local configuration and logins. No outreach is started automatically.
+  Includes a real bundled Python environment, upstream MIT notice, and private persistent login directories for Claude Code and Codex. The dashboard uses Umbrel authentication; configuration and logins survive app updates. No outreach is started automatically.
