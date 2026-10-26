@@ -1,0 +1,39 @@
+name: Publish Harvey image
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ethanplusai/harvey
+          ref: 8023a9495eb46d644f03da8c8f4d2b9e41e5836e
+          path: upstream
+      - name: Prepare packaged image
+        run: |
+          cp -a packaging upstream/packaging
+          cat upstream/Dockerfile packaging/Dockerfile.append > upstream/Dockerfile.umbrel
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: upstream
+          file: upstream/Dockerfile.umbrel
+          push: true
+          tags: ghcr.io/nath-vfx/harvey-umbrel:8023a949
+          labels: |
+            org.opencontainers.image.source=https://github.com/Nath-vfx/umbrel-harvey
+            org.opencontainers.image.revision=8023a9495eb46d644f03da8c8f4d2b9e41e5836e
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

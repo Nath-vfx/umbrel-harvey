@@ -1,0 +1,32 @@
+manifestVersion: 1.1
+id: nath-harvey
+name: Harvey
+tagline: Your subscription-powered AI sales agent
+category: ai
+version: "0.2.1-umbrel.1"
+port: 5555
+icon: https://avatars.githubusercontent.com/u/249879463?s=256
+description: >-
+  Harvey finds prospects, drafts outreach, handles replies and helps book meetings using your Claude or ChatGPT subscription.
+
+
+  This independent community package integrates Harvey with Umbrel's app authentication and persistent app storage. Your configuration, database, prompts, skills and provider logins remain on your Umbrel.
+
+
+  Open the dashboard to configure your product and mailbox. A Claude subscription login or Codex login is required; the provider CLIs are included. Use Umbrel's app terminal for provider authentication if needed. Installation starts the dashboard only, not outreach. Complete setup and explicitly start Harvey when ready; review the approval and sending settings before sending email.
+website: https://github.com/ethanplusai/harvey
+developer: Ethan+
+submitter: Nath-vfx
+repo: https://github.com/Nath-vfx/umbrel-harvey
+support: https://github.com/Nath-vfx/umbrel-harvey/issues
+dependencies: []
+gallery:
+  - https://raw.githubusercontent.com/ethanplusai/harvey/8023a9495eb46d644f03da8c8f4d2b9e41e5836e/docs/screenshots/today-dark.png
+  - https://raw.githubusercontent.com/ethanplusai/harvey/8023a9495eb46d644f03da8c8f4d2b9e41e5836e/docs/screenshots/conversations-dark.png
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+storage:
+  dataRoot: data
+releaseNotes: >-
+  Initial independent Umbrel package of Harvey 0.2.1, pinned to upstream commit 8023a949. Includes Claude Code and Codex, an authenticated Umbrel dashboard, and persistent local configuration and logins. No outreach is started automatically.

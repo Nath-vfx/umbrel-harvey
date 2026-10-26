@@ -1,0 +1,12 @@
+--- a/harvey/web/auth.js
++++ b/harvey/web/auth.js
+@@ -59,7 +59,8 @@
+   if (token) headers.set('Authorization', 'Bearer ' + token);
+   o.headers = headers;
+   o.mode = 'same-origin';
+-  o.credentials = 'omit';
++  // Umbrel authenticates each request with its same-origin app session.
++  o.credentials = 'same-origin';
+   o.cache = 'no-store';
+   o.redirect = 'error';
+   // Not 'no-referrer': per the Fetch spec that makes a POST's Origin "null"
