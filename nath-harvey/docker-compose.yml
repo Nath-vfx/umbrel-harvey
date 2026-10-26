@@ -5,7 +5,7 @@ services:
       APP_HOST: nath-harvey_server_1
       APP_PORT: 5555
   server:
-    image: ghcr.io/nath-vfx/harvey-umbrel:8023a949-2
+    image: ghcr.io/nath-vfx/harvey-umbrel:8023a949-3
     user: "1000:1000"
     init: true
     restart: on-failure

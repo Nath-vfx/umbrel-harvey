@@ -36,5 +36,6 @@ To upgrade upstream, update its pinned commit in the workflow, the image tag and
 
 ## Package changes
 
+- `0.2.1-umbrel.3`: include the upstream MIT copyright and permission notice in the distributed image.
 - `0.2.1-umbrel.2`: use the real bundled Python virtual environment, so the first-run checklist reflects the installed runtime.
 - `0.2.1-umbrel.1`: initial native package, persistent workspace, provider CLIs and authenticated dashboard adaptation.

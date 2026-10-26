@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm patc
     && mv /app /opt/harvey \
     && mkdir /app && chown harvey:harvey /app
 COPY --chown=harvey:harvey .env.example /opt/harvey/.env.example
+COPY LICENSE /opt/harvey/LICENSE
 COPY packaging/entrypoint.sh /usr/local/bin/harvey-entrypoint
 COPY packaging/harvey /usr/local/bin/harvey
 COPY packaging/browser-auth.patch /tmp/browser-auth.patch
