@@ -3,7 +3,7 @@ id: nath-harvey
 name: Harvey
 tagline: Your subscription-powered AI sales agent
 category: ai
-version: "0.2.1-umbrel.1"
+version: "0.2.1-umbrel.2"
 port: 5555
 icon: https://avatars.githubusercontent.com/u/249879463?s=256
 description: >-

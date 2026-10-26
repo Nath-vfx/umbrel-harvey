@@ -31,7 +31,7 @@ jobs:
           context: upstream
           file: upstream/Dockerfile.umbrel
           push: true
-          tags: ghcr.io/nath-vfx/harvey-umbrel:8023a949
+          tags: ghcr.io/nath-vfx/harvey-umbrel:8023a949-2
           labels: |
             org.opencontainers.image.source=https://github.com/Nath-vfx/umbrel-harvey
             org.opencontainers.image.revision=8023a9495eb46d644f03da8c8f4d2b9e41e5836e

@@ -4,6 +4,7 @@ umask 077
 cd /app
 mkdir -p data home
 # Refresh only shipped code; user configuration, prompts, skills and logins survive.
+ln -sfn /opt/venv /app/.venv
 rm -rf /app/harvey
 cp -a /opt/harvey/harvey /app/harvey
 for name in harvey.yaml prompts skills; do

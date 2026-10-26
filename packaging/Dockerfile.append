@@ -12,14 +12,16 @@ COPY packaging/harvey /usr/local/bin/harvey
 COPY packaging/browser-auth.patch /tmp/browser-auth.patch
 COPY packaging/test_gateway.py /tmp/test_gateway.py
 COPY packaging/harvey_umbrel.py /usr/local/lib/harvey_umbrel.py
-RUN chmod 755 /usr/local/bin/harvey-entrypoint /usr/local/bin/harvey
+RUN chmod 755 /usr/local/bin/harvey-entrypoint /usr/local/bin/harvey \
+    && python -m venv --system-site-packages /opt/venv
 RUN patch -d /opt/harvey -p1 < /tmp/browser-auth.patch \
     && PYTHONPATH=/opt/harvey:/usr/local/lib python /tmp/test_gateway.py \
     && rm /tmp/browser-auth.patch /tmp/test_gateway.py
 ENV HOME=/app/home \
     CLAUDE_CONFIG_DIR=/app/home/.claude \
     CODEX_HOME=/app/home/.codex \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    PATH=/opt/venv/bin:${PATH}
 USER harvey
 WORKDIR /app
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
