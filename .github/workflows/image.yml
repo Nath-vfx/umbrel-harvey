@@ -2,14 +2,31 @@ name: Publish Harvey image
 on:
   push:
     branches: [main]
+    paths:
+      - packaging/**
+      - .github/workflows/image.yml
   workflow_dispatch:
 permissions:
   contents: read
   packages: write
+env:
+  IMAGE: ghcr.io/nath-vfx/harvey-umbrel:8023a949-autonomy-1
 jobs:
   image:
     runs-on: ubuntu-latest
     steps:
+      - name: Refuse an existing immutable tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          tag="${IMAGE##*:}"
+          existing="$(gh api --paginate "/users/$OWNER/packages/container/harvey-umbrel/versions?per_page=100" \
+            --jq ".[] | select((.metadata.container.tags // []) | index(\"$tag\")) | .id")"
+          if [ -n "$existing" ]; then
+            echo "::error::Immutable image tag already exists; choose a new release tag."
+            exit 1
+          fi
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
@@ -26,14 +43,60 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v6
+      - name: Build and test packaged image
+        uses: docker/build-push-action@v6
         with:
           context: upstream
           file: upstream/Dockerfile.umbrel
-          push: true
-          tags: ghcr.io/nath-vfx/harvey-umbrel:8023a949-3
+          push: false
+          load: true
+          tags: ${{ env.IMAGE }}
           labels: |
             org.opencontainers.image.source=https://github.com/Nath-vfx/umbrel-harvey
-            org.opencontainers.image.revision=8023a9495eb46d644f03da8c8f4d2b9e41e5836e
+            org.opencontainers.image.revision=${{ github.sha }}
+            io.harvey.upstream.revision=8023a9495eb46d644f03da8c8f4d2b9e41e5836e
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Smoke isolated dashboard and stopped intention
+        run: |
+          docker volume create harvey-autonomy-smoke
+          docker run -d --name harvey-autonomy-smoke --restart unless-stopped --stop-timeout 1860 \
+            -p 127.0.0.1:5588:5555 -v harvey-autonomy-smoke:/app "$IMAGE"
+          cat > "$RUNNER_TEMP/check-harvey.py" <<'PY'
+          import json
+          import time
+          import urllib.error
+          import urllib.request
+
+          base = "http://127.0.0.1:5588"
+          for attempt in range(150):
+              try:
+                  with urllib.request.urlopen(base + "/api/harvey/status", timeout=2) as response:
+                      status = json.load(response)
+                  break
+              except (urllib.error.URLError, TimeoutError):
+                  time.sleep(0.2)
+          else:
+              raise RuntimeError("Isolated dashboard did not become available")
+          assert status["enabled"] is False and status["running"] is False, status
+          assert status["phase"] == "stopped", status
+          request = urllib.request.Request(base + "/api/harvey/stop", data=b"{}",
+                                           headers={"Content-Type": "application/json"}, method="POST")
+          with urllib.request.urlopen(request, timeout=5) as response:
+              assert response.status == 200
+          with urllib.request.urlopen(base + "/api/sending-mode", timeout=5) as response:
+              sending = json.load(response)
+          assert sending["mode"] == "approval", sending
+          print("Isolated dashboard: stopped, disabled, approval; no provider credentials or sends")
+          PY
+          python "$RUNNER_TEMP/check-harvey.py"
+          docker restart harvey-autonomy-smoke
+          python "$RUNNER_TEMP/check-harvey.py"
+      - name: Publish verified immutable image
+        run: docker push "$IMAGE"
+      - name: Clean isolated container
+        if: always()
+        run: |
+          docker logs harvey-autonomy-smoke || true
+          docker rm -f harvey-autonomy-smoke || true
+          docker volume rm harvey-autonomy-smoke || true

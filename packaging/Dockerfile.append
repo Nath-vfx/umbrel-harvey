@@ -8,16 +8,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm patc
     && mkdir /app && chown harvey:harvey /app
 COPY --chown=harvey:harvey .env.example /opt/harvey/.env.example
 COPY LICENSE /opt/harvey/LICENSE
+COPY --chown=harvey:harvey README.md CHANGELOG.md pyproject.toml /opt/harvey/
+COPY --chown=harvey:harvey tests/ /opt/harvey/tests/
 COPY packaging/entrypoint.sh /usr/local/bin/harvey-entrypoint
 COPY packaging/harvey /usr/local/bin/harvey
 COPY packaging/browser-auth.patch /tmp/browser-auth.patch
+COPY packaging/autonomy.patch /tmp/autonomy.patch
 COPY packaging/test_gateway.py /tmp/test_gateway.py
 COPY packaging/harvey_umbrel.py /usr/local/lib/harvey_umbrel.py
 RUN chmod 755 /usr/local/bin/harvey-entrypoint /usr/local/bin/harvey \
     && python -m venv --system-site-packages /opt/venv
 RUN patch -d /opt/harvey -p1 < /tmp/browser-auth.patch \
+    && patch -d /opt/harvey -p1 < /tmp/autonomy.patch \
     && PYTHONPATH=/opt/harvey:/usr/local/lib python /tmp/test_gateway.py \
-    && rm /tmp/browser-auth.patch /tmp/test_gateway.py
+    && python -m venv --system-site-packages /tmp/harvey-check \
+    && /tmp/harvey-check/bin/python -m pip install -e '/opt/harvey[dev]' \
+    && PYTHONPATH=/opt/harvey /tmp/harvey-check/bin/python -m pytest /opt/harvey/tests -q \
+    && rm -rf /tmp/harvey-check /opt/harvey/tests \
+    && rm /tmp/browser-auth.patch /tmp/autonomy.patch /tmp/test_gateway.py
 ENV HOME=/app/home \
     CLAUDE_CONFIG_DIR=/app/home/.claude \
     CODEX_HOME=/app/home/.codex \
