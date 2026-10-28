@@ -5,10 +5,11 @@ services:
       APP_HOST: nath-harvey_server_1
       APP_PORT: 5555
   server:
-    image: ghcr.io/nath-vfx/harvey-umbrel:8023a949-3
+    image: ghcr.io/nath-vfx/harvey-umbrel:8023a949-autonomy-1
     user: "1000:1000"
     init: true
-    restart: on-failure
+    restart: unless-stopped
+    stop_grace_period: 31m
     volumes:
       - ${APP_DATA_DIR}/data:/app
     logging:

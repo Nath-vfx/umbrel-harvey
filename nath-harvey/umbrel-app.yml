@@ -3,7 +3,7 @@ id: nath-harvey
 name: Harvey
 tagline: Your subscription-powered AI sales agent
 category: ai
-version: "0.2.1-umbrel.4"
+version: "0.2.1-umbrel.5"
 port: 5555
 icon: https://avatars.githubusercontent.com/u/249879463?s=256
 description: >-
@@ -13,7 +13,7 @@ description: >-
   This independent community package integrates Harvey with Umbrel's app authentication and persistent app storage. Your configuration, database, prompts, skills and provider logins remain on your Umbrel.
 
 
-  Open the dashboard to configure your product and mailbox. A Claude subscription login or Codex login is required; the provider CLIs are included. Use Umbrel's app terminal for provider authentication if needed. Installation starts the dashboard only, not outreach. Complete setup and explicitly start Harvey when ready; review the approval and sending settings before sending email.
+  Open the dashboard to configure your product and mailbox. A Claude subscription login or Codex login is required; the provider CLIs are included. Use Umbrel's app terminal for provider authentication if needed. A fresh installation starts the dashboard only, not outreach. A successful explicit Start enables heartbeat recovery after restart; Stop disables that intention and drains current work. Complete setup and review approval and sending settings before sending email.
 website: https://github.com/ethanplusai/harvey
 developer: Ethan+
 submitter: Nath-vfx
@@ -29,4 +29,4 @@ defaultPassword: ""
 storage:
   dataRoot: data
 releaseNotes: >-
-  Includes a real bundled Python environment, upstream MIT notice, and private persistent login directories for Claude Code and Codex. The dashboard uses Umbrel authentication; configuration and logins survive app updates. No outreach is started automatically.
+  Adds opt-in bounded local outreach with free-provider budgets, sourced eligibility, first-contact limits, J+4/J+10 followups, French refusal handling and transactional replies. Read-only Calendly reconciliation records actual appointments and blocks cold outreach when sync is incomplete. Explicit Start/Stop intention survives restart, with visible cycle health and a graceful drain of up to 30 minutes. Fresh installs remain stopped. Umbrel authentication, private persistent logins and the pinned upstream version are preserved. Provider accounts, controlled delivery/calendar tests, backup restoration and a real host-reboot check are still operator prerequisites; installation does not activate autopilot.
