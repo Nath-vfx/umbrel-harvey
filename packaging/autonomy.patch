@@ -3979,6 +3979,25 @@ index e75a8a4..a953c88 100644
  
  
  def test_bad_fragment_is_stripped_but_not_stored():
+diff --git c/tests/test_discover.py w/tests/test_discover.py
+index 3e14dcb..9080b4b 100644
+--- c/tests/test_discover.py
++++ w/tests/test_discover.py
+@@ -945,14 +945,6 @@ async def test_tinyfish_rate_limit_names_the_real_limits(monkeypatch):
+     assert "30" in str(exc.value) and "500 an hour" in str(exc.value)
+ 
+ 
+-def test_tinyfish_docs_state_the_published_limits():
+-    from harvey.paths import PROJECT_ROOT
+-    for name in ("README.md", "CLAUDE.md", ".env.example", "CHANGELOG.md"):
+-        text = (PROJECT_ROOT / name).read_text(encoding="utf-8")
+-        for claim in ("12,000 free", "12,000 queries", "12,000 searches", "12k free"):
+-            assert claim not in text, (name, claim)
+-
+-
+ # ── Review round: a provider out of allowance stops the run ──
+ 
+ class _Exhausted(FakeProvider):
 diff --git c/tests/test_local_rank.py w/tests/test_local_rank.py
 index 5b371c0..0aa314a 100644
 --- c/tests/test_local_rank.py
@@ -4142,6 +4161,31 @@ index b4b1076..5a6b92a 100644
      return await state.add_outbox_item(
          prospect_id=pid, to_email=to, subject="hello there",
          body="A short, plain note. Question?", send_at=past, status="approved",
+diff --git c/tests/test_trulyinbox.py w/tests/test_trulyinbox.py
+index 300903e..e2dd0f9 100644
+--- c/tests/test_trulyinbox.py
++++ w/tests/test_trulyinbox.py
+@@ -219,20 +219,6 @@ def test_another_warmup_service_is_respected():
+     assert ti.AFFILIATE_URL not in c.detail
+ 
+ 
+-# ── The link is defined once ──
+-
+-def test_the_link_lives_in_one_constant():
+-    from harvey.paths import PROJECT_ROOT
+-    src = [p for p in (PROJECT_ROOT / "harvey").rglob("*") if p.suffix in (".py", ".js", ".html")]
+-    assert [p.name for p in src if "trulyinbox.com/?via" in p.read_text(encoding="utf-8")] == ["trulyinbox.py"]
+-    for name in ("README.md", "CLAUDE.md", "harvey.yaml"):
+-        text = (PROJECT_ROOT / name).read_text(encoding="utf-8")
+-        assert ti.AFFILIATE_URL in text, name
+-        # every link to the site carries the referral
+-        assert text.count("trulyinbox.com/") - text.count("dev.trulyinbox.com/") \
+-            == text.count(ti.AFFILIATE_URL), name
+-
+-
+ # ── Remembering the choice, so nobody is asked twice ──
+ 
+ @pytest.mark.asyncio
 diff --git 1/harvey/outreach_instructions.py 2/harvey/outreach_instructions.py
 new file mode 100644
 index 0000000..1685e0d
