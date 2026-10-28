@@ -74,7 +74,7 @@ jobs:
                   with urllib.request.urlopen(base + "/api/harvey/status", timeout=2) as response:
                       status = json.load(response)
                   break
-              except (urllib.error.URLError, TimeoutError):
+              except (urllib.error.URLError, ConnectionError, TimeoutError):
                   time.sleep(0.2)
           else:
               raise RuntimeError("Isolated dashboard did not become available")
