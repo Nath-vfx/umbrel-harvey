@@ -30,6 +30,14 @@ Harvey's upstream dashboard is loopback-only. This package exposes an internal D
 
 ## Maintenance and check
 
+### Maintenance-only Codex pin
+
+`ghcr.io/nath-vfx/harvey-umbrel:8023a949-3-codex-0.159.3` derives directly from the installed `8023a949-3` runtime, pinned to base digest `sha256:9d3884424dff3479dbd86346c92e6ab1ae0c18d686839a07501e776d973e06b7`. Its only runtime change is installing npm `@openai/codex@0.159.3` as root, then restoring `USER harvey`. It retains the original Python runtime and does **not** contain the autonomy cutover described below.
+
+The separate, manual `codex-pin.yml` workflow builds `codex-pin/Dockerfile`, checks the exact CLI version with the installed Python adapter, then exercises the actual dashboard in a fresh credential-free, network-disabled container. It requires stopped/no-PID and approval state both before and after restart, and only then publishes the immutable tag. It never starts a campaign or sends mail. This maintenance workflow does not rebuild the autonomy image, change the Umbrel manifest, or deploy to an installed app.
+
+### Autonomy image
+
 The image workflow uses the pinned upstream Dockerfile plus the runtime additions in `packaging`. It applies `browser-auth.patch`, then `autonomy.patch`; the latter includes the behavioral regressions. The build runs the full upstream suite and `packaging/test_gateway.py`, which checks same-origin access, cross-origin rejection, JSON enforcement and token privacy using the real upstream guard. A fresh isolated container must stay stopped and in approval across a Stop/restart before the image is published. This is not the credentialed Gmail/Calendly or host-reboot acceptance test. To run the gateway check separately with Harvey's dependencies installed:
 
 ```
@@ -43,6 +51,8 @@ Published release tags are immutable: the workflow refuses an existing tag. Choo
 The bounded local-outreach profile is opt-in (`prospecting.enabled`). It uses only explicitly selected free discovery and ZeroBounce verification with durable budgets, sourced eligibility, separate first-contact limits, J+4/J+10 followups and a business window covering replies too. Calendly is read-only and fails closed for cold outreach when sync is incomplete. French refusals and legal/commercial exceptions remain held. Prepare private `harvey.local.yaml` and `skills/product_knowledge.md`; never put real business/contact data, provider keys or OAuth tokens in this public store.
 
 ## Package changes
+
+- Maintenance-only `8023a949-3-codex-0.159.3`: pin the supported Codex CLI while retaining the installed `8023a949-3` runtime; no autonomy cutover or deployment.
 
 - `0.2.1-umbrel.5`: opt-in bounded outreach and read-only calendar reconciliation; durable Start/Stop intention, visible loop health and graceful drain; full behavioral/security build checks and immutable image publication.
 
